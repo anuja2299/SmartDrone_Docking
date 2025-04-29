@@ -13,25 +13,25 @@ This project implements an autonomous drone navigation system using a Convolutio
 
 ## Repository Structure
 
+```plaintext
 drone_project_ws/
 ├── src/
 │   ├── drone_simulation/
-│   │   ├── drone_simulation/          # Main scripts directory
-│   │   │   ├── cnn.py                # CNN for pattern detection
-│   │   │   ├── ddpg.py               # DDPG training and model
-│   │   │   ├── test_ddpg.py          # Real-time DDPG testing
-│   │   │   ├── simulated_odom.py     # Odometry node
-│   │   │   └── pattern_position.txt  # Target position file
-│   │   ├── worlds/                   # Gazebo world files
-│   │   │   └── drone_world.sdf       # Simulation world
-│   │   ├── config/                   # Configuration files
-│   │   │   └── config.yaml           # Configuration parameters
-│   │   └── launch/                   # Launch files
-│   │       └── drone_docking.launch.py # Gazebo launch script
-├── README.md                         # This file
-└── .gitignore                        # Git ignore file
-
-
+│   │   ├── drone_simulation/
+│   │   │   ├── cnn.py
+│   │   │   ├── ddpg.py
+│   │   │   ├── test_ddpg.py
+│   │   │   ├── simulated_odom.py
+│   │   │   └── pattern_position.txt
+│   │   ├── worlds/
+│   │   │   └── drone_world.sdf
+│   │   ├── config/
+│   │   │   └── config.yaml
+│   │   └── launch/
+│   │       └── drone_docking.launch.py
+├── README.md
+└── .gitignore
+```
 
 ## Main Files
 - **`cnn.py`**: Implements the CNN to detect the target pattern from images, saving the position to `pattern_position.txt`. Requires TensorFlow and OpenCV.
@@ -47,3 +47,12 @@ drone_project_ws/
 - **ROS 2 Jazzy**: Install via:
   ```bash
   sudo apt update && sudo apt install ros-jazzy-desktop
+  sudo apt install ros-jazzy-gazebo-ros2-control
+  pip install tensorflow
+  pip install numpy
+  pip install h5py
+  pip install opencv-python
+  ```
+
+## Prerequisites
+
