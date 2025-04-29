@@ -1,7 +1,7 @@
 # SmartDrone_Docking
 
-Drone Navigation with CNN and DDPG
-Project Overview
+Drone Navigation with CNN and DDPG \\
+Project Overview\\
 This project implements an autonomous drone navigation system using a Convolutional Neural Network (CNN) for pattern detection and Deep Deterministic Policy Gradient (DDPG) reinforcement learning for control. The drone navigates to a target pattern (e.g., a QR code) in a simulated Gazebo environment, leveraging real-time odometry feedback. The system is designed as a waterflow architecture, processing data from perception through learning, execution, and monitoring, with no manual initialization or control inputs.
 
 Key Features:
