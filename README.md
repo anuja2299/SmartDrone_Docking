@@ -29,3 +29,6 @@ drone_project_ws/
 │   │       └── drone_docking.launch.py # Gazebo launch script
 ├── README.md                         # This file
 └── .gitignore                        # Git ignore file
+│   │       └── drone_docking.launch.py # Gazebo launch script
+├── README.md                         # This file
+└── .gitignore                        # Git ignore file
