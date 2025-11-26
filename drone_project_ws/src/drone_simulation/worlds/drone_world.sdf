@@ -1,0 +1,383 @@
+<?xml version="1.0"?>
+<sdf version="1.8">
+  <world name="drone_world">
+    <physics name="1ms" type="dart">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <ode><solver><type>quick</type></solver></ode>
+    </physics>
+    
+    <!-- Required plugins -->
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"></plugin>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"></plugin>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"></plugin>
+    <plugin filename="gz-sim-buoyancy-system" name="gz::sim::systems::Buoyancy">
+      <uniform_fluid_density>1.2</uniform_fluid_density>
+    </plugin>
+    
+    <!-- Light source -->
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+    
+    <!-- Ground plane -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Quadcopter model -->
+    <model name="drone">
+      <pose>-0.9 -1 0 0 0 0</pose> <!-- Initial position at [0, 0, 0] -->
+      <!-- Root link as base_link -->
+      <link name="base_link">
+        <pose>0 0 0 0 0 0</pose>
+        <inertial>
+          <mass>1.5</mass>
+          <inertia>
+            <ixx>0.0347</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.0347</iyy>
+            <iyz>0</iyz>
+            <izz>0.0693</izz>
+          </inertia>
+        </inertial>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.35 0.35 0.1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.35 0.35 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.1 0.1 0.6 1</ambient>
+            <diffuse>0.1 0.1 0.6 1</diffuse>
+          </material>
+        </visual>
+        
+        <!-- Camera -->
+        <sensor name="camera" type="camera">
+          <pose>0 0 -0.05 1.5707 0 0</pose>
+          <camera>
+            <horizontal_fov>0.5</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+            </image>
+            <clip>
+              <near>0.1</near>
+              <far>100</far>
+            </clip>
+          </camera>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <visualize>true</visualize>
+          <topic>/camera</topic>
+        </sensor>
+        
+        <!-- Arms -->
+        <visual name="arm1">
+          <pose>0.13 0.13 0 0 0 0.785</pose>
+          <geometry>
+            <box>
+              <size>0.02 0.2 0.02</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.3 0.3 0.3 1</ambient>
+            <diffuse>0.3 0.3 0.3 1</diffuse>
+          </material>
+        </visual>
+        
+        <visual name="arm2">
+          <pose>-0.13 0.13 0 0 0 -0.785</pose>
+          <geometry>
+            <box>
+              <size>0.02 0.2 0.02</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.3 0.3 0.3 1</ambient>
+            <diffuse>0.3 0.3 0.3 1</diffuse>
+          </material>
+        </visual>
+        
+        <visual name="arm3">
+          <pose>-0.13 -0.13 0 0 0 0.785</pose>
+          <geometry>
+            <box>
+              <size>0.02 0.2 0.02</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.3 0.3 0.3 1</ambient>
+            <diffuse>0.3 0.3 0.3 1</diffuse>
+          </material>
+        </visual>
+        
+        <visual name="arm4">
+          <pose>0.13 -0.13 0 0 0 -0.785</pose>
+          <geometry>
+            <box>
+              <size>0.02 0.2 0.02</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.3 0.3 0.3 1</ambient>
+            <diffuse>0.3 0.3 0.3 1</diffuse>
+          </material>
+        </visual>
+      </link>
+      
+      <!-- Rotor links -->
+      <link name="rotor1">
+        <pose>0.2 0.2 0.05 0 0 0</pose>
+        <inertial>
+          <mass>0.05</mass>
+          <inertia>
+            <ixx>0.0001</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.0001</iyy>
+            <iyz>0</iyz>
+            <izz>0.0001</izz>
+          </inertia>
+        </inertial>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>0.1</radius>
+              <length>0.01</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.7 0.0 0.0 0.8</ambient>
+            <diffuse>0.7 0.0 0.0 0.8</diffuse>
+          </material>
+        </visual>
+      </link>
+      
+      <link name="rotor2">
+        <pose>-0.2 0.2 0.05 0 0 0</pose>
+        <inertial>
+          <mass>0.05</mass>
+          <inertia>
+            <ixx>0.0001</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.0001</iyy>
+            <iyz>0</iyz>
+            <izz>0.0001</izz>
+          </inertia>
+        </inertial>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>0.1</radius>
+              <length>0.01</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.0 0.7 0.0 0.8</ambient>
+            <diffuse>0.0 0.7 0.0 0.8</diffuse>
+          </material>
+        </visual>
+      </link>
+      
+      <link name="rotor3">
+        <pose>-0.2 -0.2 0.05 0 0 0</pose>
+        <inertial>
+          <mass>0.05</mass>
+          <inertia>
+            <ixx>0.0001</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.0001</iyy>
+            <iyz>0</iyz>
+            <izz>0.0001</izz>
+          </inertia>
+        </inertial>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>0.1</radius>
+              <length>0.01</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.7 0.0 0.0 0.8</ambient>
+            <diffuse>0.7 0.0 0.0 0.8</diffuse>
+          </material>
+        </visual>
+      </link>
+      
+      <link name="rotor4">
+        <pose>0.2 -0.2 0.05 0 0 0</pose>
+        <inertial>
+          <mass>0.05</mass>
+          <inertia>
+            <ixx>0.0001</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.0001</iyy>
+            <iyz>0</iyz>
+            <izz>0.0001</izz>
+          </inertia>
+        </inertial>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>0.1</radius>
+              <length>0.01</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.0 0.7 0.0 0.8</ambient>
+            <diffuse>0.0 0.7 0.0 0.8</diffuse>
+          </material>
+        </visual>
+      </link>
+      
+      <!-- Joints referencing base_link as parent -->
+      <joint name="rotor1_joint" type="revolute">
+        <parent>base_link</parent>
+        <child>rotor1</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-1e16</lower>
+            <upper>1e16</upper>
+          </limit>
+          <dynamics>
+            <damping>0.05</damping>
+          </dynamics>
+        </axis>
+      </joint>
+      
+      <joint name="rotor2_joint" type="revolute">
+        <parent>base_link</parent>
+        <child>rotor2</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-1e16</lower>
+            <upper>1e16</upper>
+          </limit>
+          <dynamics>
+            <damping>0.05</damping>
+          </dynamics>
+        </axis>
+      </joint>
+      
+      <joint name="rotor3_joint" type="revolute">
+        <parent>base_link</parent>
+        <child>rotor3</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-1e16</lower>
+            <upper>1e16</upper>
+          </limit>
+          <dynamics>
+            <damping>0.05</damping>
+          </dynamics>
+        </axis>
+      </joint>
+      
+      <joint name="rotor4_joint" type="revolute">
+        <parent>base_link</parent>
+        <child>rotor4</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-1e16</lower>
+            <upper>1e16</upper>
+          </limit>
+          <dynamics>
+            <damping>0.05</damping>
+          </dynamics>
+        </axis>
+      </joint>
+      
+      <static>false</static>
+      
+      <!-- gazebo_ros2_control plugin -->
+      <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+        <parameters>/home/anuja/drone_project_ws/src/drone_simulation/config/config.yaml</parameters>
+      </plugin>
+      
+      <!-- Added plugin for pose control -->
+      <plugin filename="libgazebo_ros_p3d.so" name="gazebo_ros_control">
+        <topicName>/drone/set_pose</topicName>
+        <bodyName>base_link</bodyName>
+      </plugin>
+    </model>
+    
+    <!-- Single QR pattern target -->
+    <model name="qr_pattern_1">
+      <pose>-2.8 0.2 0.01 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>1.0 1.0 0.02</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 1 1 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+            <specular>0.5 0.5 0.5 1</specular>
+            <pbr>
+              <metal>
+                <albedo_map>file:///home/anuja/drone_project_ws/src/drone_simulation/worlds/qr_code.png</albedo_map>
+              </metal>
+            </pbr>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.8 0.8 0.02</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+  </world>
+</sdf>
